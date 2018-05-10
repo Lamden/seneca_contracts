@@ -25,3 +25,11 @@ if __name__ == '__main__':
       'name': st.column(str),
       'contract': st.column(int)
     })
+
+    exports = make_exports(
+    	claim_name,
+    	does_resolve,
+    	resolve,
+    	prefix,
+    	minimum_length
+    )
