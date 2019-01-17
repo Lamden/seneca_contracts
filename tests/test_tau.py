@@ -14,8 +14,6 @@ def tau():
 	    balances[to] += amount
 	    balances[rt['sender']] -= amount
 
-	# a better way to deal with 'allowances' which are dumb af
-	# and don't reflect real life business operations
 	custodials = hmap('custodials', str, hmap(key_type=str, value_type=int))
 
 	@export

@@ -9,6 +9,7 @@ swaps = hmap('swaps', str, hmap(None, str, table(None, {
 	'expiration': int,
 })))
 
+
 def initiate(_initiator: str,
 	_participant: str,
 	_expiration: int,
