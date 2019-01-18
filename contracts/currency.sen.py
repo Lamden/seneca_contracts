@@ -3,17 +3,14 @@ from seneca.libs.datatypes import hmap
 # Declare Data Types
 xrate = hmap('xrate', str, float)
 balances = hmap('balances', str, int)
-custodials = hmap('custodials', str, hmap(key_type=str, value_type=int))
+approved = hmap('approved', str, hmap(key_type=str, value_type=int))
 
-
+# Initialization
+xrate['TAU_STP'] = 1.0
+balances['LamdenReserves'] = 0
 
 @seed
 def initialize_contract():
-
-    # Initialization
-    xrate['TAU_STP'] = 1.0
-    balances['LamdenReserves'] = 0
-
     # Deposit to all network founders
     ALL_WALLETS = [
         '324ee2e3544a8853a3c5a0ef0946b929aa488cbe7e7ee31a0fef9585ce398502',
@@ -40,34 +37,32 @@ def submit_stamps(stamps):
     assert sender_balance >= 0, "Not enough funds to submit stamps"
 
 @export
+def balance_of(wallet_id):
+    return balances[wallet_id]
+
+@export
 def transfer(to, amount):
-    assert stamps > 0, "Transfer amount must be non-negative."
-    assert balances[rt['sender']] >= amount, "Not enough funds to transfer"
-    balances[to] += amount
+    # print("transfering from {} to {} with amount {}".format(rt['sender'], to, amount))
     balances[rt['sender']] -= amount
-
-@export
-def add_to_custodial(to, amount):
-    assert balances[rt['sender']] >= amount, "Not enough funds to add to custodial"
-    custodials[rt['sender']][to] += amount
-    balances[rt['sender']] -= amount
-
-@export
-def remove_from_custodial(to, amount):
-    assert custodials[rt['sender']][to] >= amount, "Not enough allowance in custodial"
-    balances[rt['sender']] += amount
-    custodials[rt['sender']][to] -= amount
-
-@export
-def spend_custodial(_from, amount, to):
-    assert custodials[_from][rt['sender']] >= amount, 'Not enough allowance to spend in custodial'
     balances[to] += amount
-    custodials[_from][rt['sender']] -= amount
+    sender_balance = balances[rt['sender']]
+
+    assert sender_balance >= 0, "Sender balance must be non-negative!!!"
 
 @export
-def get_balance(account):
-    return balances[account]
+def approve(spender, amount):
+    approved[rt['sender']][spender] = amount
+
 
 @export
-def get_custodial(owner, spender):
-    return custodials[owner][spender]
+def transfer_from(_from, to, amount):
+    assert approved[_from][rt['sender']] >= amount
+    assert balances[_from] >= amount
+
+    approved[_from][rt['sender']] -= amount
+    balances[_from] -= amount
+    balances[to] += amount
+
+@export
+def allowance(approver, spender):
+    return approved[approver][spender]

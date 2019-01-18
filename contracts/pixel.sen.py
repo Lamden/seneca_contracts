@@ -1,16 +1,13 @@
 from seneca.libs.datatypes import hmap
 from seneca.contracts.tau import transfer, get_balance, spend_custodial
 
-@seed
-def initialize_contract():
+owners = hmap('owners', str, str)
+prices = hmap('prices', str, int)
+colors = hmap('colors', str, str)
 
-    MAX_X = 250
-    MAX_Y = 250
-    board_owner = 'falcon'
-
-    owners = hmap('owners', str, str)
-    prices = hmap('prices', str, int)
-    colors = hmap('colors', str, str)
+MAX_X = 250
+MAX_Y = 250
+board_owner = 'falcon'
 
 def coor_str(x, y):
     return '{},{}'.format(x, y)

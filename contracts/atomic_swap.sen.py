@@ -16,9 +16,9 @@ def initiate(_initiator: str,
 	_hashlock: bytes,
 	_token: str,
 	_amount: int):
+
 	if not swaps[_participant][_hashlock].exists():
 
-		# dynamic import of token
 		token = importlib.import_module(_token)
 		assert token.allowance(rt['sender'], rt['contract_address']) >= _amount
 		token.transfer_from(rt['sender'], rt['contract_address'], _amount)
