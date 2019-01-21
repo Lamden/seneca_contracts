@@ -5,8 +5,6 @@ xrate = hmap('xrate', str, float)
 balances = hmap('balances', str, int)
 custodials = hmap('custodials', str, hmap(key_type=str, value_type=int))
 
-
-
 @seed
 def initialize_contract():
 

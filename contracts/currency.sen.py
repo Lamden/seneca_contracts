@@ -3,7 +3,7 @@ from seneca.libs.datatypes import hmap
 # Declare Data Types
 xrate = hmap('xrate', str, float)
 balances = hmap('balances', str, int)
-approved = hmap('approved', str, hmap(key_type=str, value_type=int))
+allowed = hmap('allowed', str, hmap(key_type=str, value_type=int))
 
 # Initialization
 xrate['TAU_STP'] = 1.0
@@ -51,18 +51,16 @@ def transfer(to, amount):
 
 @export
 def approve(spender, amount):
-    approved[rt['sender']][spender] = amount
-
+    allowed[rt['sender']][spender] = amount
 
 @export
 def transfer_from(_from, to, amount):
-    assert approved[_from][rt['sender']] >= amount
+    assert allowed[_from][rt['sender']] >= amount
     assert balances[_from] >= amount
-
-    approved[_from][rt['sender']] -= amount
+    allowed[_from][rt['sender']] -= amount
     balances[_from] -= amount
     balances[to] += amount
 
 @export
 def allowance(approver, spender):
-    return approved[approver][spender]
+    return allowed[approver][spender]
